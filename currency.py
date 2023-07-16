@@ -6,6 +6,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix='$', intents=intents)
 
 # Event triggered when the bot is ready and connected to Discord
+
 @client.event
 async def on_ready():
     print(f'{client.user} is running!')
@@ -13,6 +14,7 @@ async def on_ready():
     await channel.send("Hello, I am the finance bot. Type '$help' to learn more about me.")
 
 # Custom help command class
+
 class CustomHelpCommand(commands.DefaultHelpCommand):
     def __init__(self):
         super().__init__()
@@ -34,6 +36,7 @@ class CustomHelpCommand(commands.DefaultHelpCommand):
 
 client.help_command = CustomHelpCommand()
 
+
 #Command to convert currencies
 
 @client.command()
@@ -51,6 +54,7 @@ async def convert(ctx, amount: float, base: str, target: str):
 
 
 # Command to retrieve stock information
+
 @client.command()
 async def stock(ctx, symbol: str):
     api_key = ''
@@ -78,6 +82,25 @@ async def stock(ctx, symbol: str):
         await ctx.send(message)
     else:
         await ctx.send(f"Stock symbol {symbol} is not found.")
+
+
+#Command that provides cryptocurrency data (bitcoin and ethereum)
+
+@client.command()
+async def crypto(ctx):
+    url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd'
+    response = requests.get(url)
+    data = response.json()
+
+    if 'bitcoin' in data and 'ethereum' in data:
+        btc_price_usd = data['bitcoin']['usd']
+        eth_price_usd = data['ethereum']['usd']
+        
+        message = f'Crypto Prices:\nBitcoin (USD): {btc_price_usd}\nEthereum (USD): {eth_price_usd}'
+        await ctx.send(message)
+    else:
+        await ctx.send('Failed to fetch crypto prices.')
+
 
 # This is the unique identifier for the bot
 TOKEN = ''
